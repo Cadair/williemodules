@@ -34,6 +34,8 @@ email_username = <>
 email_password = <>
 """
 
+import itertools
+
 import willie
 
 try:
@@ -189,8 +191,7 @@ def remove_notification(bot, trigger):
     table_name = bot.config.notify.table_name
     cursor = connect.execute("SELECT * FROM {} WHERE nick='{}' AND service='{}' AND parameter='{}'".format(table_name, nick, service, parameter))
     for row in cursor:
-        strs = [str(x) for x in row]
-        bot.reply("Removing {}".format(' | '.join(strs)))
+        bot.reply("Removing {}".format(' | '.join(itertools.imap(str, row))))
         connect.execute("DELETE FROM {} WHERE pkey={}".format(table_name, row[0]))
     connect.commit()
 
@@ -211,8 +212,7 @@ def list_notifications(bot, trigger):
     table_name = bot.config.notify.table_name
     cursor = connect.execute("SELECT * FROM {}".format(table_name))
     for row in cursor:
-        strs = [str(x) for x in row]
-        bot.say("{}".format(' | '.join(strs)))
+        bot.say("{}".format(' | '.join(itertools.imap(str, row))))
 
 #==============================================================================
 # Listener and notication dispatcher
